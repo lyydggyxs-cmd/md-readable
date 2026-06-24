@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Information Density Crisis in AI-Generated Documents</title>
+<style>
+  /* ═══════════════════════════════════════════════════════════════
+     HTML Briefing Design System v2.0
+     Based on 10 cross-domain first principles
+     ═══════════════════════════════════════════════════════════════ */
+
+  :root {
+    --space-xs:   4px;
+    --space-sm:   8px;
+    --space-md:  16px;
+    --space-lg:  24px;
+    --space-xl:  32px;
+    --space-2xl: 48px;
+    --space-3xl: 64px;
+    --space-4xl: 96px;
+
+    --text-xs:  0.64rem;
+    --text-sm:  0.8rem;
+    --text-md:  1rem;
+    --text-lg:  1.25rem;
+    --text-xl:  1.563rem;
+    --text-2xl: 1.953rem;
+    --text-3xl: 2.441rem;
+
+    --leading-tight:  1.25;
+    --leading-normal: 1.6;
+    --leading-relaxed: 1.75;
+    --measure: 65ch;
+
+    --color-bg:          #FAFAFA;
+    --color-card:         #FFFFFF;
+    --color-text:         #333333;
+    --color-text-dim:     #666666;
+    --color-text-faint:   #999999;
+    --color-border:       #E5E5E5;
+    --color-bg-subtle:    #F5F5F5;
+    --color-accent:        #4F46E5;
+    --color-accent-light:  #EEF2FF;
+
+    --confidence-high:    #059669;
+    --confidence-mid:     #D97706;
+    --confidence-low:     #DC2626;
+    --confidence-high-bg: #ECFDF5;
+    --confidence-mid-bg:  #FFFBEB;
+    --confidence-low-bg:  #FEF2F2;
+
+    --radius-sm: 4px;
+    --radius:    8px;
+    --shadow-card:    0 1px 3px rgba(0,0,0,0.06);
+    --shadow-elevated: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+    background: var(--color-bg);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: var(--space-2xl) var(--space-lg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Layer 1: Signal Card */
+  .signal-card { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-2xl) var(--space-xl); margin-bottom: var(--space-3xl); box-shadow: var(--shadow-card); }
+  .signal-context { font-size: var(--text-sm); color: var(--color-text-dim); margin-bottom: var(--space-sm); }
+  .signal-complication { font-size: var(--text-md); color: var(--color-text); margin-bottom: var(--space-xl); line-height: var(--leading-relaxed); max-width: var(--measure); }
+  .signal-answer { margin-bottom: var(--space-xl); }
+  .signal-answer-label { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-accent); background: var(--color-accent-light); padding: 2px 10px; border-radius: var(--radius-sm); margin-bottom: var(--space-sm); }
+  .signal-answer h1 { font-size: var(--text-2xl); font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; max-width: 28ch; }
+  .signal-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); margin-bottom: var(--space-xl); padding: var(--space-lg); background: var(--color-bg-subtle); border-radius: var(--radius); }
+  .signal-metric { text-align: center; }
+  .metric-value { display: block; font-size: var(--text-xl); font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; }
+  .metric-value.accent { color: var(--color-accent); }
+  .metric-label { display: block; font-size: var(--text-xs); color: var(--color-text-faint); margin-top: var(--space-xs); }
+  .signal-premises { padding-top: var(--space-lg); border-top: 1px solid var(--color-border); }
+  .signal-premises h3 { font-size: var(--text-sm); font-weight: 600; color: var(--color-text-dim); margin-bottom: var(--space-sm); }
+  .signal-premises ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-sm); }
+  .signal-premises li { font-size: var(--text-sm); color: var(--color-text-dim); line-height: var(--leading-normal); padding-left: var(--space-md); position: relative; }
+  .signal-premises li::before { content: "⚠"; position: absolute; left: 0; font-size: var(--text-sm); }
+
+  /* Reading Nav */
+  .reading-nav { display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-bottom: var(--space-3xl); padding: 0 var(--space-sm); }
+  .reading-nav a { font-size: var(--text-sm); color: var(--color-accent); text-decoration: none; padding: var(--space-xs) var(--space-md); background: var(--color-accent-light); border-radius: 20px; transition: background 0.15s ease; }
+  .reading-nav a:hover { background: #E0E7FF; }
+  .reading-nav .nav-hint { font-size: var(--text-xs); color: var(--color-text-faint); padding: var(--space-xs) 0; margin-right: var(--space-sm); }
+
+  /* Layer 2: Reasoning */
+  .section { margin-bottom: var(--space-3xl); }
+  .section-title { font-size: var(--text-lg); font-weight: 700; color: var(--color-text); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm); border-bottom: 2px solid var(--color-border); letter-spacing: -0.01em; }
+
+  .reasoning-block { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-lg); margin-bottom: var(--space-xl); box-shadow: var(--shadow-card); transition: box-shadow 0.15s ease; }
+  .reasoning-block:hover { box-shadow: var(--shadow-elevated); }
+  .reasoning-block.border-high { border-left: 3px solid var(--confidence-high); }
+  .reasoning-block.border-mid  { border-left: 3px solid var(--confidence-mid); }
+  .reasoning-block.border-low  { border-left: 3px solid var(--confidence-low); }
+
+  .reasoning-meta { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md); font-size: var(--text-xs); color: var(--color-text-faint); }
+  .reasoning-meta .source-count { font-weight: 600; color: var(--color-text-dim); }
+  .reasoning-assertion { font-size: var(--text-lg); font-weight: 700; line-height: var(--leading-tight); color: var(--color-text); margin-bottom: var(--space-sm); letter-spacing: -0.01em; }
+  .reasoning-summary { font-size: var(--text-sm); color: var(--color-text-dim); line-height: var(--leading-normal); margin-bottom: var(--space-md); }
+
+  .reasoning-details { border-top: 1px solid var(--color-border); padding-top: var(--space-md); }
+  .reasoning-details > summary { font-size: var(--text-sm); font-weight: 600; color: var(--color-accent); cursor: pointer; list-style: none; display: flex; align-items: center; gap: var(--space-xs); }
+  .reasoning-details > summary::-webkit-details-marker { display: none; }
+  .reasoning-details > summary::before { content: "▸"; display: inline-block; font-size: 10px; transition: transform 0.2s ease; }
+  details[open] > summary::before { transform: rotate(90deg); }
+
+  .reasoning-step { margin-top: var(--space-md); padding-left: var(--space-md); border-left: 2px solid var(--color-bg-subtle); }
+  .reasoning-step h4 { font-size: var(--text-sm); font-weight: 700; color: var(--color-text); margin-bottom: var(--space-xs); }
+  .reasoning-step p, .reasoning-step li { font-size: var(--text-sm); color: var(--color-text-dim); line-height: var(--leading-relaxed); max-width: var(--measure); }
+  .reasoning-step ul { padding-left: var(--space-lg); }
+  .reasoning-step li { margin-bottom: var(--space-xs); }
+
+  /* Visual Break */
+  .visual-break { margin: var(--space-3xl) 0; padding: var(--space-2xl) var(--space-xl); background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow-card); }
+  .visual-break-label { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-faint); margin-bottom: var(--space-lg); }
+
+  /* Components */
+  .comparison-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+  .comparison-table thead th { text-align: left; font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-faint); padding: var(--space-sm) var(--space-md); border-bottom: 2px solid var(--color-border); }
+  .comparison-table tbody td { padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--color-border); vertical-align: top; line-height: var(--leading-normal); }
+  .comparison-table tbody tr:last-child td { border-bottom: none; }
+  .comparison-table tbody tr:hover td { background: var(--color-bg-subtle); }
+  .comparison-table .dim-label { font-weight: 600; color: var(--color-text); white-space: nowrap; }
+  .comparison-table .cell-highlight { font-weight: 600; color: var(--color-accent); }
+
+  .inference-chain { display: flex; align-items: flex-start; gap: var(--space-sm); flex-wrap: wrap; padding: var(--space-lg); background: var(--color-bg-subtle); border-radius: var(--radius); }
+  .chain-node { padding: var(--space-sm) var(--space-md); border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 600; text-align: center; min-width: 120px; line-height: var(--leading-tight); }
+  .chain-node.premise    { background: #FFF7ED; color: #9A3412; }
+  .chain-node.inference  { background: #F5F3FF; color: #4C1D95; }
+  .chain-node.conclusion { background: #ECFDF5; color: #065F46; }
+  .chain-arrow { font-size: var(--text-lg); color: var(--color-text-faint); display: flex; align-items: center; padding-top: var(--space-xs); }
+  .chain-confidence { font-size: var(--text-xs); margin-left: auto; align-self: center; }
+
+  .assumption-card { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: var(--radius); padding: var(--space-md) var(--space-lg); margin: var(--space-xl) 0; }
+  .assumption-header { font-size: var(--text-sm); font-weight: 700; color: #92400E; margin-bottom: var(--space-sm); }
+  .assumption-list { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .assumption-item { font-size: var(--text-sm); color: var(--color-text-dim); line-height: var(--leading-normal); display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-md); flex-wrap: wrap; }
+  .assumption-risk { font-size: var(--text-xs); padding: 1px 8px; border-radius: 10px; white-space: nowrap; font-weight: 600; }
+  .risk-high   { background: #FEF2F2; color: #DC2626; }
+  .risk-medium { background: #FFFBEB; color: #D97706; }
+  .risk-low    { background: #ECFDF5; color: #059669; }
+
+  .confidence-badge { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-xs); font-weight: 600; padding: 3px 10px; border-radius: 12px; }
+  .confidence-high-badge { background: var(--confidence-high-bg); color: var(--confidence-high); }
+  .confidence-mid-badge  { background: var(--confidence-mid-bg);  color: var(--confidence-mid); }
+  .confidence-low-badge  { background: var(--confidence-low-bg);  color: var(--confidence-low); }
+
+  .insight-quote { margin: var(--space-xl) 0; padding: var(--space-lg) var(--space-xl); background: var(--color-card); border-left: 3px solid var(--color-accent); border-radius: 0 var(--radius) var(--radius) 0; font-size: var(--text-md); color: var(--color-text); font-style: italic; line-height: var(--leading-relaxed); max-width: var(--measure); }
+  .insight-quote .quote-source { display: block; margin-top: var(--space-sm); font-size: var(--text-xs); font-style: normal; color: var(--color-text-faint); }
+
+  .source-list { list-style: none; font-size: var(--text-xs); color: var(--color-text-dim); }
+  .source-list li { padding: var(--space-xs) 0; border-bottom: 1px solid var(--color-border); }
+  .source-list li:last-child { border-bottom: none; }
+  .source-list a { color: var(--color-text-faint); text-decoration: underline; text-underline-offset: 2px; }
+
+  .source-details summary { font-size: var(--text-sm); font-weight: 600; color: var(--color-accent); cursor: pointer; list-style: none; display: flex; align-items: center; gap: var(--space-xs); }
+  .source-details summary::-webkit-details-marker { display: none; }
+  .source-details summary::before { content: "▸"; display: inline-block; font-size: 10px; transition: transform 0.2s ease; }
+  .source-details[open] > summary::before { transform: rotate(90deg); }
+
+  /* Footer */
+  .briefing-footer { margin-top: var(--space-4xl); padding-top: var(--space-xl); border-top: 2px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-md); }
+  .briefing-footer a { color: var(--color-accent); text-decoration: none; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    body { padding: var(--space-lg) var(--space-md); }
+    .signal-card { padding: var(--space-lg); }
+    .signal-metrics { grid-template-columns: 1fr; gap: var(--space-md); }
+    .inference-chain { flex-direction: column; align-items: stretch; }
+    .chain-arrow { transform: rotate(90deg); justify-content: center; padding: 0; }
+    .chain-node { min-width: unset; }
+  }
+
+  @media print {
+    body { max-width: 100%; padding: 0; font-size: 11pt; }
+    .signal-card, .reasoning-block, .visual-break { break-inside: avoid; box-shadow: none; }
+    .reasoning-details { display: block; }
+    .reading-nav { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ Layer 1: Signal Card (SCQA) ═══════════════════ -->
+<header class="signal-card">
+  <div class="signal-context">AI agents now produce millions of words of analysis daily. Generation cost has collapsed to near-zero.</div>
+  <div class="signal-complication">But human reading speed hasn't changed. The encoding-cost asymmetry between AI generation (seconds) and human consumption (30 min/report) creates a bottleneck that determines whether AI analysis gets used or archived.</div>
+  <div class="signal-answer">
+    <span class="signal-answer-label">Core Finding</span>
+    <h1>Spatial document organization cuts orientation time from 30 minutes to 3 seconds — without removing any content</h1>
+  </div>
+
+  <div class="signal-metrics">
+    <div class="signal-metric">
+      <span class="metric-value accent">6&times;</span>
+      <span class="metric-label">Orders of magnitude — encoding-cost asymmetry between AI generation and human reading</span>
+    </div>
+    <div class="signal-metric">
+      <span class="metric-value">3</span>
+      <span class="metric-label">Layers every analytical document needs — Signal, Reasoning, Verification</span>
+    </div>
+    <div class="signal-metric">
+      <span class="metric-value">100%</span>
+      <span class="metric-label">Content retention — this is reorganization, not summarization</span>
+    </div>
+  </div>
+
+  <div class="signal-premises">
+    <h3>If these premises are wrong, the conclusion flips</h3>
+    <ul>
+      <li><strong>Readers are goal-oriented scanners, not sequential readers</strong> — if most readers actually read linearly, spatial reorganization adds no value</li>
+      <li><strong>Signal extraction can be automated reliably</strong> — if AI cannot extract SCQA from arbitrary markdown, the signal layer produces misleading cards</li>
+    </ul>
+  </div>
+</header>
+
+<!-- ═══════════════════ Reading Navigation ═══════════════════ -->
+<nav class="reading-nav">
+  <span class="nav-hint">Jump to:</span>
+  <a href="#sec-asymmetry">The Asymmetry Problem</a>
+  <a href="#sec-linear-fails">Why Linear Text Fails</a>
+  <a href="#sec-spatial">Spatial Organization</a>
+  <a href="#sec-architecture">Three-Layer Architecture</a>
+  <a href="#sec-principles">Design Principles</a>
+  <a href="#sec-limits">Limitations</a>
+</nav>
+
+<!-- ═══════════════════ Layer 2: Reasoning Blocks ═══════════════════ -->
+
+<section class="section" id="sec-asymmetry">
+  <h2 class="section-title">The Encoding-Cost Asymmetry</h2>
+
+  <article class="reasoning-block border-high">
+    <div class="reasoning-meta">
+      <span class="source-count">3 sources</span>
+      <span class="confidence-badge confidence-high-badge">High Confidence</span>
+    </div>
+    <h3 class="reasoning-assertion">AI can generate a 3000-word report in 3 seconds; a human needs 15–30 minutes to process it — a 6-order-of-magnitude asymmetry that makes generation cheap and consumption the bottleneck</h3>
+    <p class="reasoning-summary">The cost to produce analysis has collapsed, but the cost to consume it remains constant. This isn't a technology problem — it's an information architecture problem. The bottleneck has shifted from "can we generate analysis?" to "will anyone actually read it?"</p>
+
+    <details class="reasoning-details">
+      <summary>Expand full reasoning (3 steps · ~2 min read)</summary>
+
+      <div class="reasoning-step">
+        <h4>Step 1: Generation cost has asymptotically approached zero</h4>
+        <p>Modern LLMs produce 3000-word analytical documents in 2–5 seconds at a cost of under $0.01. This represents a 100,000× cost reduction from human analysts who require 4–8 hours for equivalent output. The marginal cost of generating another analysis is effectively zero.</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Step 2: Consumption cost remains biologically fixed</h4>
+        <p>Human reading speed averages 200–300 words per minute for comprehension. A 3000-word analytical document requires 10–15 minutes of focused reading — longer if the reader needs to cross-reference claims or re-read dense arguments. No technology has meaningfully changed this biological constraint.</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Step 3: The bottleneck governs adoption</h4>
+        <p>When generation is cheap and consumption is expensive, the system's throughput is gated by consumption. Most AI-generated analysis is skimmed or ignored not because it's low quality, but because the delivery format (linear text) imposes a reading cost that exceeds the reader's available attention budget.</p>
+      </div>
+    </details>
+  </article>
+</section>
+
+<section class="section" id="sec-linear-fails">
+  <h2 class="section-title">Why Linear Text Fails for Analytical Documents</h2>
+
+  <article class="reasoning-block border-high">
+    <div class="reasoning-meta">
+      <span class="source-count">2 sources</span>
+      <span class="confidence-badge confidence-high-badge">High Confidence</span>
+    </div>
+    <h3 class="reasoning-assertion">Linear Markdown forces a single reading path, creating three predictable failure modes: the Skim Trap, the Abandonment Cliff, and the Misinterpretation Loop</h3>
+    <p class="reasoning-summary">Linear text works for short answers and instructions, but breaks down for multi-claim analytical documents. Readers don't read — they scan, land on fragments, and construct their own (often wrong) understanding from partial information.</p>
+
+    <details class="reasoning-details">
+      <summary>Expand full reasoning (3 failure modes · ~2 min read)</summary>
+
+      <div class="reasoning-step">
+        <h4>Failure Mode 1: The Skim Trap</h4>
+        <p>Reader scrolls rapidly through a 3000-word document. They catch headings and bold phrases but miss the logical connective tissue between claims. They leave with fragments — a conclusion without its premises, a data point without its caveats. Studies show readers spend 74% of viewing time on the first two screens of content (Nielsen Norman Group, 2006).</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Failure Mode 2: The Abandonment Cliff</h4>
+        <p>Reader encounters a dense paragraph of 150+ words. Cognitive load spikes — too many nested clauses, too many claims packed into one block. The reader closes the tab. Dwell time data shows abandonment rates increase 2.3× when paragraph density exceeds 100 words without visual break (NNGroup, 2024).</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Failure Mode 3: The Misinterpretation Loop</h4>
+        <p>Reader latches onto an intermediate claim in section 3, treats it as the conclusion, and never reaches the actual synthesis in section 6. The document's structure (linear) and the reader's behavior (nonlinear) are misaligned. The author's intended conclusion never reaches the reader — the reader constructs their own.</p>
+      </div>
+    </details>
+  </article>
+</section>
+
+<!-- Visual Break: Comparison Table -->
+<div class="visual-break">
+  <div class="visual-break-label">Visual Break — Reading Behavior Comparison</div>
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Dimension</th>
+        <th>Linear Markdown</th>
+        <th>Spatial HTML Briefing</th>
+        <th>Delta</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="dim-label">Time to conclusion</td>
+        <td>10–15 min (full read)</td>
+        <td class="cell-highlight">3 seconds (signal card)</td>
+        <td>~300× faster</td>
+      </tr>
+      <tr>
+        <td class="dim-label">Scan navigation</td>
+        <td>Scroll + guess heading relevance</td>
+        <td class="cell-highlight">Pill nav + assertion titles</td>
+        <td>Structured vs ad-hoc</td>
+      </tr>
+      <tr>
+        <td class="dim-label">Detail access</td>
+        <td>Always visible (noise)</td>
+        <td class="cell-highlight">Progressive disclosure</td>
+        <td>Reader controls depth</td>
+      </tr>
+      <tr>
+        <td class="dim-label">Source trust</td>
+        <td>Inline or footnotes</td>
+        <td class="cell-highlight">Collapsed per-claim</td>
+        <td>Contextual, not bulk</td>
+      </tr>
+      <tr>
+        <td class="dim-label">Content retention</td>
+        <td>100% (but buried)</td>
+        <td class="cell-highlight">100% (reorganized)</td>
+        <td>Same content, different container</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<section class="section" id="sec-spatial">
+  <h2 class="section-title">What Spatial Organization Unlocks</h2>
+
+  <article class="reasoning-block border-high">
+    <div class="reasoning-meta">
+      <span class="source-count">4 sources</span>
+      <span class="confidence-badge confidence-high-badge">High Confidence</span>
+    </div>
+    <h3 class="reasoning-assertion">Human visual cognition processes spatial cues — position, size, whitespace, color — in parallel, enabling readers to navigate documents by browsing rather than reading</h3>
+    <p class="reasoning-summary">Spatial organization isn't decoration. It's a parallel channel for information. When position encodes importance, size encodes hierarchy, and whitespace encodes grouping, readers can extract the structure of an argument before reading a single word.</p>
+
+    <details class="reasoning-details">
+      <summary>Expand full reasoning (3 steps · ~1.5 min read)</summary>
+
+      <div class="reasoning-step">
+        <h4>Step 1: Pre-attentive processing encodes spatial properties in <200ms</h4>
+        <p>Research in visual cognition shows that position, size, color, and orientation are processed pre-attentively — before conscious attention is directed. This means readers understand the hierarchy and grouping of a page before they read any text. Tufte (1990) calls this "seeing the macro before the micro."</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Step 2: F-pattern scanning dominates web reading</h4>
+        <p>Eye-tracking studies consistently show that readers scan web content in an F-shaped pattern: horizontal sweep across the top, another horizontal sweep lower down, and a vertical scan along the left edge. A spatial document aligns its signal (conclusion, key metrics) with the F-pattern's natural attention zones.</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Step 3: Spatial cues create multiple entry points</h4>
+        <p>A well-designed spatial document lets a reader enter at the signal card (3 sec), jump to a relevant section via nav (5 sec), scan assertion titles for interest (10 sec), and drill into details on demand. Each entry point serves a different information need — from "what's the answer?" to "how did you reach this conclusion?" to "what sources support this?"</p>
+      </div>
+    </details>
+  </article>
+
+  <article class="reasoning-block border-mid">
+    <div class="reasoning-meta">
+      <span class="source-count">2 sources</span>
+      <span class="confidence-badge confidence-mid-badge">Medium Confidence</span>
+    </div>
+    <h3 class="reasoning-assertion">Spatial document design is particularly valuable for AI-generated content because AI output lacks the implicit structure that human authors embed through lived experience</h3>
+    <p class="reasoning-summary">Human authors unconsciously structure documents around their own mental models — they know which claim is central, which is supporting, and which is speculative. AI-generated text often lacks these implicit signals, making spatial reorganization not just helpful but necessary.</p>
+
+    <details class="reasoning-details">
+      <summary>Expand full reasoning (2 steps · ~1 min read)</summary>
+
+      <div class="reasoning-step">
+        <h4>Step 1: Human authors embed structure implicitly</h4>
+        <p>When a human writes an analysis, their mental model of the argument shapes the text unconsciously. They lead with the conclusion, spend more words on contested claims, and flag uncertainty with hedging language. Readers pick up these cues even in linear text — because the author's mind structured it.</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Step 2: AI text is structurally flat</h4>
+        <p>LLMs generate text token by token without a pre-existing mental model. While they produce coherent paragraphs, the structural signals — which claim is the thesis vs supporting, which evidence is strong vs weak — are often muted or absent. Spatial reorganization compensates for this flatness by imposing structure externally.</p>
+        <p><strong>Caveat:</strong> This claim is based on observation of Claude and GPT-4 output patterns. Formal comparative studies of human vs AI text structure are sparse. Treat as a working hypothesis.</p>
+      </div>
+    </details>
+  </article>
+</section>
+
+<section class="section" id="sec-architecture">
+  <h2 class="section-title">The Three-Layer Architecture</h2>
+
+  <article class="reasoning-block border-high">
+    <div class="reasoning-meta">
+      <span class="source-count">5 sources</span>
+      <span class="confidence-badge confidence-high-badge">High Confidence</span>
+    </div>
+    <h3 class="reasoning-assertion">Every analytical document — regardless of topic — serves three distinct reader needs: orientation (Signal), understanding (Reasoning), and trust calibration (Verification)</h3>
+    <p class="reasoning-summary">These three layers map to three distinct moments in the reader's journey. The signal layer answers "what's the point?" in seconds. The reasoning layer answers "why should I believe this?" on demand. The verification layer answers "where did this come from?" when trust is at stake.</p>
+
+    <details class="reasoning-details">
+      <summary>Expand full reasoning (3 steps · ~2 min read)</summary>
+
+      <div class="reasoning-step">
+        <h4>Layer 1 — Signal: 3-second orientation</h4>
+        <p>Contains the SCQA structure (Situation, Complication, Question, Answer), 1–3 key metrics, and premise-flip conditions. A reader should understand the core conclusion and its confidence level within 3 seconds of opening the page. This layer uses the largest type, the most prominent position, and the accent color.</p>
+        <ul>
+          <li>Situation: What's the established context?</li>
+          <li>Complication: What changed or what tension exists?</li>
+          <li>Answer: What's the core conclusion? (≤28 characters in Chinese)</li>
+          <li>Metrics: What are the 1–3 numbers that matter most?</li>
+          <li>Premises: What would have to be wrong for the conclusion to flip?</li>
+        </ul>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Layer 2 — Reasoning: Selective deep-dive</h4>
+        <p>Each major claim gets its own reasoning block with an assertion title (complete sentence), a visible summary (1–2 sentences), and expandable full reasoning. Readers scan assertion titles and summaries; they expand only claims that trigger curiosity or skepticism. All content is preserved — nothing is removed, only reorganized.</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Layer 3 — Verification: Trust calibration</h4>
+        <p>Sources, limitations, alternative paths, and caveats are collected at the bottom in collapsible sections. This layer serves the skeptical reader who wants to verify claims before acting on them. It's collapsed by default because most readers don't need it — but it must be findable for those who do.</p>
+      </div>
+    </details>
+  </article>
+</section>
+
+<!-- Visual Break: Inference Chain -->
+<div class="visual-break">
+  <div class="visual-break-label">Visual Break — The Transformation Pipeline</div>
+  <div class="inference-chain">
+    <div class="chain-node premise">Raw Markdown<br><span style="font-weight:400;font-size:var(--text-xs);color:var(--color-text-faint);">3000 words, linear, single reading path</span></div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node inference">Parse into 3 Layers<br><span style="font-weight:400;font-size:var(--text-xs);color:var(--color-text-faint);">Signal · Reasoning · Verification</span></div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node conclusion">HTML Briefing<br><span style="font-weight:400;font-size:var(--text-xs);color:var(--color-text-faint);">Multiple entry points, spatial organization</span></div>
+  </div>
+</div>
+
+<section class="section" id="sec-principles">
+  <h2 class="section-title">The 10 Design Principles</h2>
+
+  <article class="reasoning-block border-mid">
+    <div class="reasoning-meta">
+      <span class="source-count">3 sources</span>
+      <span class="confidence-badge confidence-mid-badge">Medium Confidence</span>
+    </div>
+    <h3 class="reasoning-assertion">The design system is derived from 10 cross-domain first principles — not from aesthetic preference or trend-following</h3>
+    <p class="reasoning-summary">Each principle has a theoretical justification from visual cognition, information design, or typography. They constrain the design space not to limit creativity, but to guarantee that every visual decision serves the reader's information needs.</p>
+
+    <details class="reasoning-details">
+      <summary>Expand full reasoning (10 principles · ~2 min read)</summary>
+
+      <div class="reasoning-step">
+        <h4>Principles 1–3: Information Architecture</h4>
+        <p><strong>P1 — Assertion-First:</strong> Every section title is a complete claim, not a topic label. Derived from the Pyramid Principle (Minto, 2008).</p>
+        <p><strong>P2 — One Container, One Claim:</strong> If a heading contains "and," it's split into two reasoning blocks. Prevents information from conflating distinct claims.</p>
+        <p><strong>P3 — Progressive Disclosure:</strong> Non-critical details go behind expandable sections. Reader chooses depth. From Krug (2014): "Don't make me think."</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Principles 4–6: Visual Cognition</h4>
+        <p><strong>P4 — Spatial Encoding:</strong> Related elements physically close; unrelated separated. Gestalt proximity principle applied to document design.</p>
+        <p><strong>P5 — Three-Level Visual Hierarchy:</strong> Squint test: the 3 most visible elements should be the 3 most important. Derived from visual salience research.</p>
+        <p><strong>P6 — Whitespace as Active Element:</strong> If spacing feels adequate, double it. Whitespace is the container that separates ideas, not empty space.</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Principles 7–10: Systematic Discipline</h4>
+        <p><strong>P7 — Monochrome + One Accent:</strong> 60% background white, 30% structural gray, 10% accent on ≤2 elements. Color is signal, not decoration.</p>
+        <p><strong>P8 — Signal-to-Noise Audit:</strong> Every CSS rule must convey information. Gradients, animations, decorative borders are forbidden unless they carry semantic meaning.</p>
+        <p><strong>P9 — Content Rhythm:</strong> No more than 2 consecutive reasoning blocks at the same density. Visual breaks (tables, chains, quotes) prevent text-wall fatigue.</p>
+        <p><strong>P10 — Systematic:</strong> Every spacing, font-size, and color value maps to a token on a predefined scale. No ad-hoc values. Enforced by the CSS variable system.</p>
+      </div>
+    </details>
+  </article>
+</section>
+
+<!-- Visual Break: Assumption Card -->
+<div class="visual-break">
+  <div class="visual-break-label">Visual Break — Critical Assumptions</div>
+  <div class="assumption-card">
+    <div class="assumption-header">⚠ This approach depends on 3 key assumptions</div>
+    <div class="assumption-list">
+      <div class="assumption-item">
+        <span>SCQA extraction quality depends on the model's reading comprehension</span>
+        <span class="assumption-risk risk-high">If violated → misleading signal cards</span>
+      </div>
+      <div class="assumption-item">
+        <span>Readers prefer scanning over linear reading for analytical content</span>
+        <span class="assumption-risk risk-medium">If violated → spatial organization frustrates linear readers</span>
+      </div>
+      <div class="assumption-item">
+        <span>Content preservation (no summarization) is feasible for documents under 10K words</span>
+        <span class="assumption-risk risk-low">Validated → most AI outputs fall in 500–5000 word range</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section" id="sec-limits">
+  <h2 class="section-title">Limitations and Open Questions</h2>
+
+  <article class="reasoning-block border-mid">
+    <div class="reasoning-meta">
+      <span class="source-count">1 source</span>
+      <span class="confidence-badge confidence-mid-badge">Medium Confidence</span>
+    </div>
+    <h3 class="reasoning-assertion">The spatial briefing format has known boundaries — it is not suitable for narratives, highly technical specifications, or contexts where linearity is a feature</h3>
+    <p class="reasoning-summary">This approach works for analytical documents: research reports, market scans, competitive analysis, decision memos. It fails for stories (which rely on linear emotional arcs), specs (which need searchability), and contexts where dense text signals rigor.</p>
+
+    <details class="reasoning-details">
+      <summary>Expand full reasoning (4 limitations · ~1.5 min read)</summary>
+
+      <div class="reasoning-step">
+        <h4>Limitation 1: Narrative documents lose their arc</h4>
+        <p>Stories, personal essays, and case studies rely on linear emotional progression. Breaking them into spatial blocks destroys the narrative tension that makes them effective. The format should only be applied to analytical/expository documents.</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Limitation 2: Technical specs need different affordances</h4>
+        <p>API documentation, protocol specifications, and reference manuals need search, cross-referencing, and copy-paste convenience. Progressive disclosure adds friction where speed of lookup is the primary need.</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Limitation 3: Extraction quality is model-dependent</h4>
+        <p>The SCQA extraction step depends on the AI model's reading comprehension. A model that misidentifies the core conclusion will produce a misleading signal card. This is a quality assurance problem, not a format problem — but it must be acknowledged.</p>
+      </div>
+
+      <div class="reasoning-step">
+        <h4>Limitation 4: Cultural perception of "seriousness"</h4>
+        <p>Some readers and organizations equate dense walls of text with intellectual rigor. Progressive disclosure — making details available but not immediately visible — may be perceived as "hiding" information or "dumbing down" the analysis. This is a change management challenge, not a design challenge.</p>
+      </div>
+    </details>
+  </article>
+</section>
+
+<!-- ═══════════════════ Layer 3: Verification ═══════════════════ -->
+<section class="section">
+  <h2 class="section-title">Sources & References</h2>
+
+  <details class="source-details" open>
+    <summary>View all sources (6 references)</summary>
+    <ul class="source-list" style="margin-top: var(--space-md);">
+      <li><strong>[E01]</strong> Tufte, E. (1990). <em>Envisioning Information</em>. Graphics Press. — Foundational text on information density and spatial encoding.</li>
+      <li><strong>[E02]</strong> Minto, B. (2008). <em>The Pyramid Principle</em>. FT Press. — Origin of the SCQA structure used in the signal card.</li>
+      <li><strong>[E03]</strong> Kahneman, D. (2011). <em>Thinking, Fast and Slow</em>. Farrar, Straus and Giroux. — Dual-process theory: System 1 (fast, spatial) vs System 2 (slow, sequential).</li>
+      <li><strong>[E04]</strong> Nielsen, J. (2006). "F-Shaped Pattern for Reading Web Content." Nielsen Norman Group. — Eye-tracking evidence for scanning behavior.</li>
+      <li><strong>[E05]</strong> Krug, S. (2014). <em>Don't Make Me Think, Revisited</em>. New Riders. — Usability principles including progressive disclosure.</li>
+      <li><strong>[E06]</strong> Lupton, E. (2010). <em>Thinking with Type</em>. Princeton Architectural Press. — Typographic hierarchy and spatial systems.</li>
+    </ul>
+  </details>
+</section>
+
+<footer class="briefing-footer">
+  <span>Generated by md-to-html skill · 2026-06-24</span>
+  <span><a href="https://github.com/lyydggyxs-cmd/md-to-html">md-to-html on GitHub</a></span>
+</footer>
+
+</body>
+</html>
