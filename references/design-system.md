@@ -124,7 +124,7 @@
 ```html
 <aside class="sidebar">
   <nav class="sidebar-nav">
-    <span class="nav-hint">跳转：</span>
+    <span class="nav-hint">导航：</span>
     <a href="#section-1">[章节名]</a>
     <a href="#section-2">[章节名]</a>
     <!-- 所有章节链接 -->
@@ -909,7 +909,7 @@
   <!-- Sidebar: Sticky navigation (P4: 空间编码 —— 左侧固定 = 元信息层) -->
   <aside class="sidebar">
     <nav class="sidebar-nav">
-      <span class="nav-hint">跳转：</span>
+      <span class="nav-hint">导航：</span>
       <a href="#section-1">[章节名]</a>
       <a href="#section-2">[章节名]</a>
       <!-- 所有章节链接，按 H2 顺序 -->
