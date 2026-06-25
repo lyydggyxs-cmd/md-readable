@@ -1,14 +1,18 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude%20Code-Skill-4F46E5?logo=anthropic" alt="Claude Code Skill">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
-  <img src="https://img.shields.io/badge/design%20system-v2.0-4F46E5" alt="Design System v2.0">
+  <img src="https://img.shields.io/badge/design%20system-v2.1-4F46E5" alt="Design System v2.1">
+  <img src="https://img.shields.io/badge/deps-zero-success" alt="Zero Dependencies">
+  <img src="https://img.shields.io/badge/philosophy-don't%20compress%2C%20reorganize-blueviolet" alt="Don't compress, reorganize">
 </p>
 
 <h1 align="center">md-to-html</h1>
 <p align="center"><strong>Markdown → Human-Friendly HTML Briefings</strong></p>
-<p align="center">AI generates in seconds. Humans shouldn't need 30 minutes to read it.</p>
+<p align="center">AI generates in 3 seconds. Humans shouldn't need 30 minutes to read it.</p>
 
-<p align="center"><em>English · <a href="#中文">中文</a></em></p>
+<p align="center">
+  <em>English · <a href="#中文">中文</a></em>
+</p>
 
 ---
 
@@ -16,149 +20,152 @@
 
 **md-to-html** is a [Claude Code](https://claude.ai/code) skill that transforms AI-generated Markdown reports into scannable, human-friendly HTML briefings — **without removing or summarizing any content**.
 
-### The Problem
+> **Not a Markdown-to-HTML converter. An analyzer that reorganizes content around how humans actually consume information.**
 
-AI produces a 3,000-word analysis in 3 seconds. A human needs 15–30 minutes to read it. That's **6 orders of magnitude** of encoding-cost asymmetry. Most AI output gets skimmed, misread, or ignored — not because it's low quality, but because linear Markdown forces a single reading path that nobody follows.
+### See It in Action
 
-### The Solution
+<p align="center">
+  <em>📸 Before (Markdown wall of text) → After (Spatial briefing you can scan in 3 seconds)</em>
+  <br>
+  <sub>Open <a href="examples/ai-document-crisis.html"><code>examples/ai-document-crisis.html</code></a> in your browser for the full experience.</sub>
+</p>
 
-A **three-layer spatial architecture** that reorganizes — but doesn't compress — analytical content:
+---
+
+## Why This Exists
+
+**Thariq Shihipar** (Claude Code team, Anthropic) lit a fire under the ecosystem with *"The Unreasonable Effectiveness of HTML"* — arguing that Markdown collapses past 100 lines and AI agents should output HTML instead. 950,000+ views on X. He's right.
+
+But there's a deeper problem Shihipar's argument implies but doesn't solve:
+
+**AI text has three structural defects that HTML alone doesn't fix:**
+
+| AI Text Problem | Cognitive Reason | Our Solution |
+|----------------|------------------|--------------|
+| **Intention Deficit** — readers assume every sentence has a purpose, but LLM output is statistical prediction without selective intent | Kintsch (1988): reading = building a situation model; cost rises exponentially with length | **SCQA Signal Card + Confidence Markers** — Layer 1 provides the intent signal the LLM couldn't |
+| **Predictability Fatigue** — over-smooth text fails to maintain attentional arousal; no surprises, no rhythm | Pirolli & Card (1999): humans are information foragers — we scan for "scent," not read linearly | **Premise-Flip Conditions + Contrast Tables** — Layer 1 & 2 actively expose contradictions, uncertainty, alternatives |
+| **Verification Burden** — readers must simultaneously comprehend AND fact-check AI output, competing for the same working memory | Larkin & Simon (1987): diagrams encode relationships spatially, reducing search cost to zero | **Source Tracing + Layer 3 Verification** — every claim tagged with confidence and sources; verify on demand, not in parallel |
+
+HTML gives you a better container. **Three-layer spatial architecture** gives you what the container should hold. That's what this skill does.
+
+---
+
+## The Three-Layer Architecture
 
 | Layer | What It Does | Reader Time |
 |-------|-------------|-------------|
-| **Signal Card** | SCQA structure, core conclusion, key metrics, premise-flip conditions | 3 seconds |
-| **Reasoning Blocks** | Each claim gets its own block: assertion title, visible summary, expandable full reasoning | 2–15 minutes (selective) |
+| **Signal Card** | SCQA structure, core conclusion, key metrics (≤3), premise-flip conditions, confidence level | 3 seconds |
+| **Reasoning Blocks** | Each claim gets its own block: assertion title, visible summary, expandable full reasoning with sources | 2–15 minutes (selective) |
 | **Verification** | Sources, limitations, alternatives — collapsed by default | On demand |
 
-> **Key philosophy:** This is NOT a summarization tool. Every word from the original Markdown is preserved. The only thing that changes is the container.
+> **Core philosophy:** This is NOT a summarization tool. Every word from the original Markdown is preserved. The only thing that changes is the container.
 
-## Quick Demo
+---
 
-Open [`examples/ai-document-crisis.html`](examples/ai-document-crisis.html) in your browser to see the output.
+## Why This, Not That
 
-| Before (Markdown) | After (HTML Briefing) |
-|---|---|
-| [`ai-document-crisis.md`](examples/ai-document-crisis.md) — 3,000 words, linear, single reading path | [`ai-document-crisis.html`](examples/ai-document-crisis.html) — Same 3,000 words, spatial, multi-entry-point |
+| Tool | What It Excels At | When It's Not Enough |
+|------|------------------|---------------------|
+| **Pandoc** | Syntax-level conversion. Fast, deterministic. | Zero semantic understanding. A `<h2>` stays a `<h2>` — it doesn't know if that heading is a conclusion, a premise, or a topic label. |
+| **[md2html](https://github.com/haidang1810/md2html)** | Beautiful document presentation. Mermaid diagrams, timelines, callouts, multi-language. Great for specs and plans. | Designed for *documentation*, not *analysis reports*. No SCQA extraction, no confidence markers, no premise-flip conditions. Content stays linear — it just looks better. |
+| **[huashu-md-html](https://github.com/alchaincyf/huashu-md-html)** | Full pipeline: anything→md→html/docx. 4 themes, anti-AI-slop design. Great for publishing workflows. | Heavy external dependencies (pandoc, markitdown, python-docx). Template-driven — doesn't semantically analyze your content. |
+| **This skill (md-to-html)** | **Semantic reorganization of analytical content.** SCQA extraction, confidence encoding, premise-flip conditions, source tracing. Three compensation mechanisms for AI text fatigue. | Not for narratives, API docs, or pure data tables (and it'll tell you when not to use it). |
 
-The HTML file opens with a signal card that tells you the conclusion in 3 seconds. You can scan, jump to sections, and drill into details on demand. All content is there — just organized for how humans actually read.
+**If you're publishing a book → huashu. If you're documenting a system design → md2html. If you need to actually get people to read and think about your AI's analysis → this skill.**
+
+---
 
 ## Installation
 
 ### Prerequisites
 - [Claude Code](https://claude.ai/code) installed and configured
 
-### Install via GitHub
+### Install
 
 ```bash
-# Clone this repo into your Claude Code skills directory
 git clone https://github.com/lyydggyxs-cmd/md-to-html.git ~/.claude/skills/md-to-html/
 ```
 
-### Or: add as a project skill
-
-```bash
-git clone https://github.com/lyydggyxs-cmd/md-to-html.git .claude/skills/md-to-html/
-```
+**Zero dependencies.** No pip. No brew. No npm. Claude does the work — the skill just tells it what standard to meet.
 
 ### Usage
 
-In Claude Code, just point to a Markdown file:
+In Claude Code:
 
 ```
-/md-to-html path/to/report.md
+/md-to-html path/to/report.md    → outputs report.html next to source
+"Make this readable"
+"生成HTML简报" / "把这个转成HTML"
 ```
 
-Or describe what you want:
+Or point and describe:
 
 ```
-"Convert this analysis to HTML" / "生成HTML简报"
-"Make this readable" / "让这个可读"
-"Generate a briefing from this report"
+"Convert this analysis to HTML — I can't read another wall of Markdown"
+"Generate a briefing from this research report"
 ```
 
 The skill outputs `<original-filename>.html` in the same directory.
 
-## Design System
-
-The skill uses a **v2.0 design system** built on 10 cross-domain first principles (not aesthetic preference):
-
-| # | Principle | System Constraint |
-|---|-----------|-------------------|
-| 1 | Assertion-First | Every section title is a complete claim — never a topic label |
-| 2 | One Container, One Claim | "And" in a heading → split into two blocks |
-| 3 | Progressive Disclosure | Non-critical details in expandable `<details>` sections |
-| 4 | Spatial Encoding | Related elements physically close; unrelated separated |
-| 5 | Visual Hierarchy | Squint test: loudest 3 elements = most important 3 |
-| 6 | Whitespace as Active Element | All spacing values from a 4px-base token scale |
-| 7 | Monochrome + One Accent | 60% white, 30% gray, 10% accent on ≤2 elements |
-| 8 | Signal-to-Noise | No gradients, no animations, no decorative elements |
-| 9 | Content Rhythm | Max 2 consecutive reasoning blocks → insert visual break |
-| 10 | Systematic | Every value is a CSS variable; zero ad-hoc values |
-
-Full design system spec: [`references/design-system.md`](references/design-system.md)
-
-## What's Forbidden (By Design)
-
-These are explicitly **forbidden** to preserve signal-to-noise ratio:
-
-- ❌ Gradients of any kind
-- ❌ Border-radius > 12px
-- ❌ Emoji as heading/CTA decoration
-- ❌ External fonts or icon libraries
-- ❌ Animations (except 150ms hover transitions)
-- ❌ Decorative borders, dividers, or background colors
-- ❌ Ad-hoc spacing or font-size values outside the token scale
-- ❌ Important content in the bottom-right corner (visual dead zone)
-
-## Why This Matters
-
-Most "markdown to HTML" tools are template engines — they wrap your content in a pretty layout but keep the linear structure. **md-to-html** is different: it *reorganizes* content around how humans actually consume information, not how AI generates it.
-
-If you use Claude Code to produce analysis — research reports, market scans, decision memos, competitive analysis — this skill makes that analysis actually get read.
+It also knows when NOT to convert — and will tell you.
 
 ---
 
-## <a name="中文"></a>中文
+## Design System
 
-## 这是什么
+Built on **10 cross-domain first principles** (not aesthetic preference), derived from a cross-domain study of PPT design, web UI, app UI, editorial typography, and Chinese long-form reading:
 
-**md-to-html** 是一个 Claude Code 技能，将 AI 生成的 Markdown 报告转化为人类友好的、可扫读的 HTML 简报——**不删除、不压缩任何内容**。
+| # | Principle | System Constraint |
+|---|-----------|-------------------|
+| P1 | Assertion-First | Every section title is a complete claim — never a topic label |
+| P2 | One Container, One Claim | "And" in a heading → split into two blocks |
+| P3 | Progressive Disclosure | Non-critical details in expandable `<details>` with "information scent" labels |
+| P4 | Spatial Encoding > Visual Marking | 2024 eye-tracking confirms proximity beats similarity. Unrelated = separated |
+| P5 | Three-Level Visual Hierarchy | Squint test: the 3 loudest elements ARE the 3 most important |
+| P6 | Whitespace as Active Element | If spacing feels adequate — double it. Whitespace isn't empty, it's the container that separates ideas |
+| P7 | Monochrome + One Accent | 60% white, 30% structural gray, 10% accent on ≤2 elements |
+| P8 | Signal-to-Noise Maximization | Every CSS rule must convey information. No gradients, no decorative elements |
+| P9 | Content Rhythm | Max 2 consecutive reasoning blocks at same density → insert visual break (comparison table, inference chain, key quote) |
+| P10 | Systematic → Inevitable | Every spacing, font-size, and color value traces to a CSS token. Zero ad-hoc values |
 
-### 解决的问题
+Full design system spec: [`references/design-system.md`](references/design-system.md)
 
-AI 用 3 秒生成 3000 字分析。人类需要 15-30 分钟阅读。这就是 **6 个数量级**的编码成本不对称。大多数 AI 产出被略过、误读或忽略——不是因为质量差，而是因为线性 Markdown 强制单一阅读路径，而没有人会那样读。
+### What's Forbidden (Signal-to-Noise Audit)
 
-### 核心架构：三层信息模型
+These are explicitly **forbidden** to preserve signal-to-noise ratio. Each serves a specific design principle:
 
-| 层 | 功能 | 阅读时间 |
-|---|------|---------|
-| **信号卡** | SCQA 结构、核心结论、关键指标、翻转前提 | 3 秒定位 |
-| **推理块** | 每个主张独立容器：断言标题、可见摘要、可展开的完整推理 | 选择性深入 |
-| **验证层** | 来源引用、局限性、替代方案——默认折叠 | 按需查阅 |
+- ❌ Gradients of any kind (P8: elements that don't convey information)
+- ❌ Border-radius > 12px (P8 + P7: distracts from the single accent color)
+- ❌ Emoji as heading/CTA decoration (P8: emoji are emotional markers, not information architecture)
+- ❌ External fonts or icon libraries (P10: breaks self-containment)
+- ❌ Animations beyond 150ms hover transitions (P8 + accessibility)
+- ❌ Decorative borders, dividers, background colors (P8)
+- ❌ Ad-hoc spacing or font-size values outside the token scale (P10)
+- ❌ Important content in the bottom-right corner (visual dead zone: F-pattern endpoint)
+- ❌ `#000000` for body text — use `#333333` (screen readability + Chinese typography)
 
-> **核心理念：** 这不是摘要工具。源 Markdown 的每个字都保留。唯一改变的是容器。
+---
 
-## 快速演示
+## Project Structure
 
-在浏览器中打开 [`examples/ai-document-crisis.html`](examples/ai-document-crisis.html) 查看输出效果。
-
-## 安装
-
-```bash
-git clone https://github.com/lyydggyxs-cmd/md-to-html.git ~/.claude/skills/md-to-html/
+```
+~/.claude/skills/md-to-html/
+├── SKILL.md                      # Skill definition (what Claude reads)
+├── README.md                     # You are here
+├── references/
+│   └── design-system.md          # CSS tokens, component templates, full HTML skeleton
+└── examples/
+    ├── ai-document-crisis.md     # Example input (~3,000 words)
+    └── ai-document-crisis.html   # Example output (same words, spatial layout)
 ```
 
-## 使用
+---
 
-```
-/md-to-html path/to/report.md
-"生成HTML简报"
-"把这个转成HTML"
-```
+## Contributing
 
-## 设计与原则
+See [CONTRIBUTING.md](CONTRIBUTING.md). Issues and PRs welcome.
 
-基于 10 条跨领域第一性原则（非审美偏好）的设计系统。详见 [`references/design-system.md`](references/design-system.md)。
+If you've built something with this skill — a research briefing, a decision memo, a competitive analysis — share the output. Good examples help more than good code.
 
 ---
 
@@ -168,10 +175,57 @@ MIT © 2026
 
 ## Credits
 
-Built as a Claude Code skill. Design system heavily informed by Tufte, Minto (Pyramid Principle), Krug (Don't Make Me Think), and Nielsen Norman Group research.
+Built as a Claude Code skill. Design system informed by Tufte (*Envisioning Information*), Minto (*The Pyramid Principle*), Krug (*Don't Make Me Think*), Nielsen Norman Group research, and Peirce's semiotics.
+
+The three-compensation-mechanism framework is original — derived from cognitive science (Kintsch, Pirolli & Card, Larkin & Simon) applied to the specific problem of AI-generated analytical text.
+
+---
+
+## <a name="中文"></a>中文
+
+## 这是什么
+
+**md-to-html** 是一个 Claude Code 技能，将 AI 生成的 Markdown 分析报告转化为人类可扫读的 HTML 简报——**不删除、不压缩任何内容**。
+
+> 这不是 Markdown-to-HTML 转换器。这是一个分析器——它重新组织内容，让人类真正读完 AI 的分析。
+
+## 为什么需要这个
+
+Anthropic Claude Code 团队的 **Thariq Shihipar** 提出了 *"HTML 的不可理喻的有效性"*——Markdown 超过 100 行就崩溃了，AI 应该输出 HTML。观点在 X 上 95 万阅读。他是对的。
+
+但 HTML 只是容器。AI 文本有三种结构性缺陷——意图缺位、可预测性疲劳、验证负担——HTML 本身解决不了。**三层空间架构**通过 SCQA 信号卡、置信度编码、翻转前提、来源追溯来补偿这三种缺陷。
+
+## 为什么选这个，不是其他
+
+| 工具 | 适合什么 | 不适合什么 |
+|------|---------|----------|
+| Pandoc | 语法级转换，快且确定 | 零语义理解——它不知道 h2 是结论还是话题标签 |
+| md2html | 漂亮的文档展示，Mermaid/时间线/注释 | 文档不是分析报告——没有 SCQA，没有置信度 |
+| huashu-md-html | 全流水线出版，万物→md→html/docx | 重依赖（pandoc/markitdown），模板驱动不是语义分析 |
+| **这个 skill** | **分析性内容的语义重组**——SCQA 提取、置信度编码、翻转前提、来源追溯 | 不是给叙事，不是给 API 文档（而且会主动告诉你） |
+
+**出书 → huashu。写系统设计文档 → md2html。让人真正读完并思考 AI 的分析 → 这个 skill。**
+
+## 安装
+
+```bash
+git clone https://github.com/lyydggyxs-cmd/md-to-html.git ~/.claude/skills/md-to-html/
+```
+
+**零依赖。** 不 pip，不 brew，不 npm。Claude 做转换——skill 只告诉它什么标准算好。
+
+## 设计系统
+
+基于 10 条跨领域第一性原则（PPT × Web × App UI × 编辑排版 × 中文长文），不是审美偏好。详见 [`references/design-system.md`](references/design-system.md)。
+
+核心原则：**不压缩信息，重组信息。**
+
+## License
+
+MIT © 2026
 
 ---
 
 <p align="center">
-  <sub>If this skill saved you from reading one more dense wall of Markdown text, consider giving it a ⭐</sub>
+  <sub>If this skill saved you from one more dense wall of AI-generated Markdown, ⭐ the repo — it helps others find it too.</sub>
 </p>
