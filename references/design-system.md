@@ -117,15 +117,22 @@
 </header>
 ```
 
-### 阅读导航
+### 阅读导航（v3.0 — 侧边栏）
+
+桌面端 sticky 左侧栏，移动端 sticky 顶部 pills。通过 IntersectionObserver 高亮当前章节，顶部固定进度条。
 
 ```html
-<nav class="reading-nav">
-  <span class="nav-hint">跳转：</span>
-  <a href="#section-1">[章节名]</a>
-  <a href="#section-2">[章节名]</a>
-</nav>
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <span class="nav-hint">跳转：</span>
+    <a href="#section-1">[章节名]</a>
+    <a href="#section-2">[章节名]</a>
+    <!-- 所有章节链接 -->
+  </nav>
+</aside>
 ```
+
+**注意**：`<aside class="sidebar">` 是 `page-layout` grid 的直接子元素。章节超过 6 个时侧边栏仍然适用（垂直排列不受数量限制）。移动端（≤900px）自动退化为横向滚动的 sticky 顶部条。
 
 ### Layer 2：推理块（默认容器）
 
@@ -358,17 +365,86 @@
 
   /* ═══════════ Reset & Body (P10: 系统性) ═══════════ */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
     font-size: var(--text-md);
     line-height: var(--leading-normal);
     color: var(--color-text);
     background: var(--color-bg);
-    max-width: 860px;
-    margin: 0 auto;
-    padding: var(--space-2xl) var(--space-lg);
     -webkit-font-smoothing: antialiased;
   }
+
+  /* ═══════════ Page Layout (P4: 空间编码, P10: 系统性) ═══════════ */
+  .page-layout {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: var(--space-2xl) var(--space-lg);
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+
+  /* ═══════════ Progress Bar (P8: 信号, P7: 单强调色) ═══════════ */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--color-accent);
+    z-index: 100;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* ═══════════ Sidebar (P4: 空间编码 — 导航固定在左侧=元信息, P3: 渐进披露) ═══════════ */
+  .sidebar {
+    position: sticky;
+    top: calc(var(--space-2xl) + 3px);
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sidebar-nav .nav-hint {
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+    padding: 0 var(--space-sm);
+  }
+
+  .sidebar-nav a {
+    font-size: var(--text-sm);
+    color: var(--color-text-dim);
+    text-decoration: none;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+    line-height: var(--leading-tight);
+  }
+
+  .sidebar-nav a:hover {
+    color: var(--color-accent);
+    background: var(--color-accent-light);
+  }
+
+  .sidebar-nav a.active {
+    color: var(--color-accent);
+    font-weight: 700;
+    border-left-color: var(--color-accent);
+    background: var(--color-accent-light);
+  }
+
+  /* ═══════════ Content Area ═══════════ */
+  .content { min-width: 0; }
 
   /* ═══════════ Layer 1: Signal Card (P1: 断言优先, P4: 空间编码, P5: 三层层次) ═══════════ */
   .signal-card {
@@ -465,7 +541,7 @@
     font-size: var(--text-sm);
   }
 
-  /* ═══════════ Reading Nav ═══════════ */
+  /* ═══════════ Reading Nav (legacy — see .sidebar-nav for v3.0 sidebar navigation) ═══════════ */
   .reading-nav {
     display: flex;
     gap: var(--space-sm);
@@ -754,9 +830,54 @@
   }
   .readable-footer a { color: var(--color-accent); text-decoration: none; }
 
-  /* ═══════════ Responsive (P10: 系统性) ═══════════ */
-  @media (max-width: 600px) {
-    body { padding: var(--space-lg) var(--space-md); }
+  /* ═══════════ Responsive: Mobile — sidebar collapses to sticky top bar (P10: 系统性) ═══════════ */
+  @media (max-width: 900px) {
+    .page-layout {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: var(--space-lg) var(--space-md);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 3px;
+      z-index: 10;
+      background: var(--color-bg);
+      padding: var(--space-sm) 0;
+      margin: 0 calc(-1 * var(--space-md));
+      padding-left: var(--space-md);
+      padding-right: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-lg);
+    }
+
+    .sidebar-nav {
+      flex-direction: row;
+      gap: var(--space-xs);
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .sidebar-nav::-webkit-scrollbar { display: none; }
+
+    .sidebar-nav .nav-hint { display: none; }
+
+    .sidebar-nav a {
+      border-left: none;
+      border-radius: 20px;
+      padding: var(--space-xs) var(--space-md);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sidebar-nav a.active {
+      border-left: none;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
     .signal-card { padding: var(--space-lg); }
     .signal-metrics { grid-template-columns: 1fr; gap: var(--space-md); }
     .inference-chain { flex-direction: column; align-items: stretch; }
@@ -765,10 +886,12 @@
   }
 
   @media print {
-    body { max-width: 100%; padding: 0; font-size: 11pt; }
+    .progress-bar { display: none; }
+    .sidebar { display: none; }
+    .page-layout { display: block; max-width: 100%; padding: 0; }
+    body { font-size: 11pt; }
     .signal-card, .reasoning-block, .visual-break { break-inside: avoid; box-shadow: none; }
     .reasoning-details { display: block; }
-    .reading-nav { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -778,60 +901,127 @@
 </head>
 <body>
 
-<!-- Layer 1: Signal Card (SCQA) -->
-<header class="signal-card">
-  <div class="signal-context">S · [共识背景 — 1-2 句]</div>
-  <div class="signal-complication">C · [矛盾/变化 — 1-2 句]</div>
-  <div class="signal-answer">
-    <span class="signal-answer-label">结论方向</span>
-    <h1>[核心结论 —— 完整断言句，≤28 字]</h1>
-  </div>
-  <div class="signal-metrics">
-    <div class="signal-metric">
-      <span class="metric-value accent">[N]</span>
-      <span class="metric-label">[含义]</span>
-    </div>
-    <!-- 最多 3 个 -->
-  </div>
-  <div class="signal-premises">
-    <h3>如果以下前提错了，结论会翻转</h3>
-    <ul>
-      <li><strong>[前提 1]</strong> — 如果错了：[后果]</li>
-    </ul>
-  </div>
-</header>
+<!-- Progress Bar (P8: 信号 —— 编码阅读进度) -->
+<div class="progress-bar" id="progress-bar"></div>
 
-<!-- Reading Nav -->
-<nav class="reading-nav">
-  <span class="nav-hint">跳转：</span>
-  <a href="#section-1">[章节]</a>
-  <a href="#section-2">[章节]</a>
-</nav>
+<div class="page-layout">
 
-<!-- Layer 2: Reasoning Sections -->
-<section class="section" id="section-1">
-  <h2 class="section-title">[章节标题]</h2>
-  <article class="reasoning-block border-high">
-    <div class="reasoning-meta">
-      <span class="source-count">[N 个来源]</span>
-      <span class="confidence-badge confidence-high-badge">高置信度</span>
-    </div>
-    <h3 class="reasoning-assertion">[完整断言句 —— 前提 + 推理 → 结论]</h3>
-    <p class="reasoning-summary">[1-2 句摘要 —— 给扫描者"信息气味"]</p>
-    <details class="reasoning-details">
-      <summary>展开完整推理（[N] 个步骤 · 预计阅读 [M] 分钟）</summary>
-      <div class="reasoning-step">
-        <h4>步骤 1：[步骤标题]</h4>
-        <p>[内容]</p>
+  <!-- Sidebar: Sticky navigation (P4: 空间编码 —— 左侧固定 = 元信息层) -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <span class="nav-hint">跳转：</span>
+      <a href="#section-1">[章节名]</a>
+      <a href="#section-2">[章节名]</a>
+      <!-- 所有章节链接，按 H2 顺序 -->
+    </nav>
+  </aside>
+
+  <!-- Main Content Column -->
+  <main class="content">
+
+    <!-- Layer 1: Signal Card (SCQA) -->
+    <header class="signal-card">
+      <div class="signal-context">S · [共识背景 — 1-2 句]</div>
+      <div class="signal-complication">C · [矛盾/变化 — 1-2 句]</div>
+      <div class="signal-answer">
+        <span class="signal-answer-label">结论方向</span>
+        <h1>[核心结论 —— 完整断言句，≤28 字]</h1>
       </div>
-    </details>
-  </article>
-</section>
+      <div class="signal-metrics">
+        <div class="signal-metric">
+          <span class="metric-value accent">[N]</span>
+          <span class="metric-label">[含义]</span>
+        </div>
+        <!-- 最多 3 个 -->
+      </div>
+      <div class="signal-premises">
+        <h3>如果以下前提错了，结论会翻转</h3>
+        <ul>
+          <li><strong>[前提 1]</strong> — 如果错了：[后果]</li>
+        </ul>
+      </div>
+    </header>
 
-<footer class="readable-footer">
-  <span>由 [Agent 名] 生成 · [日期]</span>
-  <span><a href="[MD 产出路径]">查看完整 MD 产出</a></span>
-</footer>
+    <!-- Layer 2: Reasoning Sections -->
+    <section class="section" id="section-1">
+      <h2 class="section-title">[章节标题]</h2>
+      <article class="reasoning-block border-high">
+        <div class="reasoning-meta">
+          <span class="source-count">[N 个来源]</span>
+          <span class="confidence-badge confidence-high-badge">高置信度</span>
+        </div>
+        <h3 class="reasoning-assertion">[完整断言句 —— 前提 + 推理 → 结论]</h3>
+        <p class="reasoning-summary">[1-2 句摘要 —— 给扫描者"信息气味"]</p>
+        <details class="reasoning-details">
+          <summary>展开完整推理（[N] 个步骤 · 预计阅读 [M] 分钟）</summary>
+          <div class="reasoning-step">
+            <h4>步骤 1：[步骤标题]</h4>
+            <p>[内容]</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <footer class="readable-footer">
+      <span>由 [Agent 名] 生成 · [日期]</span>
+      <span><a href="[MD 产出路径]">查看完整 MD 产出</a></span>
+    </footer>
+
+  </main>
+</div>
+
+<!-- ═══════════ Scroll-Spy + Progress Bar (P4+P8: 空间定向+进度信号) ═══════════ -->
+<script>
+(function() {
+  var nav = document.querySelector('.sidebar-nav');
+  if (!nav) return;
+  var links = nav.querySelectorAll('a[href^="#"]');
+  var sections = [];
+  for (var i = 0; i < links.length; i++) {
+    var el = document.querySelector(links[i].getAttribute('href'));
+    if (el) sections.push(el);
+  }
+  var progressBar = document.getElementById('progress-bar');
+  if (!sections.length) return;
+
+  function update() {
+    var scrollTop = window.scrollY || document.documentElement.scrollTop;
+    // Find current section (scan from bottom for robustness)
+    var current = sections[0];
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].getBoundingClientRect().top <= 160) {
+        current = sections[i];
+        break;
+      }
+    }
+    // Update active link
+    for (var j = 0; j < links.length; j++) {
+      var isActive = links[j].getAttribute('href') === '#' + current.id;
+      if (isActive) {
+        links[j].classList.add('active');
+      } else {
+        links[j].classList.remove('active');
+      }
+    }
+    // Update progress bar
+    if (progressBar) {
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+      progressBar.style.width = pct + '%';
+    }
+  }
+
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() { update(); ticking = false; });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  update();
+})();
+</script>
 
 </body>
 </html>
