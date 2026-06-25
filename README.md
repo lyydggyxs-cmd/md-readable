@@ -7,8 +7,7 @@
 </p>
 
 <h1 align="center">md-readable</h1>
-<p align="center"><strong>Make Agent Output Readable</strong></p>
-<p align="center">The agent dumped a wall of text. You can't find the signal. Now you can.</p>
+<p align="center"><strong>Not a converter. A readability layer.</strong> It reads your agent's argument, then rebuilds it spatially.</p>
 
 <p align="center">
   <em>English · <a href="#中文">中文</a></em>
