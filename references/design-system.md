@@ -1,6 +1,6 @@
-# HTML 简报 Design System v2.0
+# md-readable Design System v2.0
 
-> CSS Token 系统、组件 HTML 模板、完整骨架。给 md-to-html skill 使用。
+> CSS Token 系统、组件 HTML 模板、完整骨架。给 md-readable skill 使用。
 >
 > 基于 10 条跨领域第一性原则。所有 CSS 规则收敛到单一骨架——修改只改一处。
 
@@ -282,7 +282,7 @@
 ### Footer
 
 ```html
-<footer class="briefing-footer">
+<footer class="readable-footer">
   <span>由 [Agent 名] 生成 · [日期]</span>
   <span><a href="[MD 产出路径]">查看完整 MD 产出</a></span>
 </footer>
@@ -304,7 +304,7 @@
 <title>[标题]</title>
 <style>
   /* ═══════════════════════════════════════════════════════════════
-     HTML 简报 Design System v2.0
+     md-readable Design System v2.0
      基于 10 条跨领域第一性原则
      所有值可追溯到 :root token —— 零 ad-hoc
      ═══════════════════════════════════════════════════════════════ */
@@ -741,7 +741,7 @@
     text-decoration: underline;
     text-underline-offset: 2px;
   }
-  .briefing-footer {
+  .readable-footer {
     margin-top: var(--space-4xl);
     padding-top: var(--space-xl);
     border-top: 2px solid var(--color-border);
@@ -752,7 +752,7 @@
     flex-wrap: wrap;
     gap: var(--space-md);
   }
-  .briefing-footer a { color: var(--color-accent); text-decoration: none; }
+  .readable-footer a { color: var(--color-accent); text-decoration: none; }
 
   /* ═══════════ Responsive (P10: 系统性) ═══════════ */
   @media (max-width: 600px) {
@@ -828,7 +828,7 @@
   </article>
 </section>
 
-<footer class="briefing-footer">
+<footer class="readable-footer">
   <span>由 [Agent 名] 生成 · [日期]</span>
   <span><a href="[MD 产出路径]">查看完整 MD 产出</a></span>
 </footer>

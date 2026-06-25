@@ -1,4 +1,4 @@
-# Contributing to md-to-html
+# Contributing to md-readable
 
 Thanks for wanting to help. This skill is young and contributions are welcome.
 
@@ -6,7 +6,7 @@ Thanks for wanting to help. This skill is young and contributions are welcome.
 
 ### Share Output Examples (Most Valuable)
 
-Used this skill to turn an AI analysis into a readable HTML briefing? **Share the output file** (or a screenshot). Real-world examples are the best documentation. Open an issue or PR with:
+Used this skill to make an agent's wall of text readable? **Share the output file** (or a screenshot). Real-world examples are the best documentation. Open an issue or PR with:
 
 - What the original Markdown was (research report, decision memo, competitive analysis, etc.)
 - A link to or screenshot of the HTML output
@@ -47,12 +47,12 @@ Currently, the signal card and UI labels are in Chinese (source language detecti
 The repo is the skill directory itself. To test changes:
 
 ```bash
-# The skill is installed at ~/.claude/skills/md-to-html/
+# The skill is installed at ~/.claude/skills/md-readable/
 # Either symlink or copy your dev version:
-ln -s $(pwd) ~/.claude/skills/md-to-html
+ln -s $(pwd) ~/.claude/skills/md-readable
 
 # Test in Claude Code:
-/md-to-html examples/ai-document-crisis.md
+/md-readable examples/ai-document-crisis.md
 ```
 
 ## Principles

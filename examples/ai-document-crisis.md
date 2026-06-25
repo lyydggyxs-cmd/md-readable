@@ -55,7 +55,7 @@ Most AI output today is 100% Layer 2 (reasoning) with no signal layer and no ver
 
 ## 5. The Design Principles (From First Principles)
 
-Starting from the observation that spatial organization reduces cognitive load, we derived 10 constraints that any HTML briefing must satisfy:
+Starting from the observation that spatial organization reduces cognitive load, we derived 10 constraints that any spatial HTML view must satisfy:
 
 1. **Assertion-First**: Every section title must be a complete claim, not a topic label. "Pricing is the primary growth lever" not "About pricing."
 2. **One Container, One Claim**: If a heading contains "and," split it into two reasoning blocks.
