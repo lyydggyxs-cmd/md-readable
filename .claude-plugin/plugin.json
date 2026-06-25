@@ -1,0 +1,20 @@
+{
+  "name": "md-readable",
+  "description": "Make AI-generated Markdown readable. When the agent dumped a wall of text and you can't find the signal — this skill unpacks linear Markdown into a scannable, three-layer spatial HTML view. Every word preserved. Nothing compressed. Not a Markdown-to-HTML converter — a readability layer that reorganizes content around how humans actually consume information.",
+  "version": "2.1.0",
+  "author": {
+    "name": "lyydggyxs-cmd",
+    "url": "https://github.com/lyydggyxs-cmd"
+  },
+  "category": "productivity",
+  "tags": ["markdown", "html", "readability", "information-architecture", "spatial-design", "agent-output"],
+  "source": {
+    "source": "github",
+    "url": "https://github.com/lyydggyxs-cmd/md-readable.git",
+    "ref": "main"
+  },
+  "strict": false,
+  "skills": ["./"],
+  "homepage": "https://github.com/lyydggyxs-cmd/md-readable",
+  "license": "MIT"
+}
